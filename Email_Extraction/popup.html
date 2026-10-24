@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Universal Reader</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 420px;
+      max-height: 640px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: #0b1220;
+      color: #e6eef8;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    .popup-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .popup-header {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(90deg,#06b6d4,#3b82f6);
+      color: white;
+      font-size: 18px;
+      box-shadow: 0 4px 18px rgba(59,130,246,0.12);
+    }
+
+    .header-title {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.03);
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+
+    .icon-btn:hover { transform: translateY(-2px); background: rgba(255,255,255,0.05); }
+
+    .platform-badge {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(99,102,241,0.12);
+      color: #c7d2fe;
+      border: 1px solid rgba(99,102,241,0.14);
+      margin-left: 6px;
+    }
+    .platform-badge.badge-gmail { background: rgba(220,38,38,0.10); color:#ffd7d7; border-color: rgba(220,38,38,0.12); }
+    .platform-badge.badge-whatsapp { background: rgba(34,197,94,0.10); color:#dfffe6; border-color: rgba(34,197,94,0.12); }
+    .platform-badge.badge-telegram { background: rgba(59,130,246,0.10); color:#dbeafe; border-color: rgba(59,130,246,0.12); }
+
+    .platform-badge.badge-all { background: rgba(148,163,184,0.06); color:#d1d5db; border-color: rgba(148,163,184,0.08); }
+
+    .badge-animate {
+      animation: badgePop 420ms cubic-bezier(.2,.9,.2,1);
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(.8); opacity: 0; }
+      60% { transform: scale(1.08); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    .popup-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px;
+      text-align: center;
+      color: #9fb0c8;
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border-radius: 10px;
+    }
+
+    .empty-icon {
+      width: 68px;
+      height: 68px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.02);
+      font-size: 32px;
+      margin-bottom: 12px;
+      color: #9fb0c8;
+    }
+
+    .empty-text {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: #dbeafe;
+    }
+
+    .empty-hint {
+      font-size: 12px;
+      color: #9fb0c8;
+    }
+
+    .email-container {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .email-section {
+      padding: 12px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .email-header {
+      margin-bottom: 16px;
+    }
+
+    .email-subject {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e5e7eb;
+      margin-bottom: 8px;
+      word-break: break-word;
+    }
+
+    .email-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: #9ca3af;
+      align-items: center;
+    }
+
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .meta-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .meta-value {
+      color: #d1d5db;
+      word-break: break-all;
+    }
+
+    .email-body {
+      background: rgba(255,255,255,0.02);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      color: #cfe7ff;
+      max-height: 320px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .email-body:empty::before {
+      content: "No email content to display";
+      color: #6b7280;
+      font-style: italic;
+    }
+
+    .email-links {
+      background: rgba(255,255,255,0.015);
+      border-radius: 8px;
+      padding: 10px;
+      margin-top: 12px;
+      font-size: 12px;
+      border: 1px solid rgba(255,255,255,0.02);
+    }
+
+    .email-links-title {
+      color: #a5d8ff;
+      font-weight: 700;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+
+    .email-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .email-link-item {
+      padding: 8px 10px;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.01);
+      border: 1px solid rgba(255,255,255,0.02);
+      display:flex;
+      flex-direction: column;
+      gap:4px;
+    }
+
+    .link-text {
+      color: #bfe8ff;
+      font-weight: 600;
+      font-size: 13px;
+    }
+
+    .link-url {
+      color: #9fb0c8;
+      font-size: 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", "Segoe UI Mono";
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .email-link-item a {
+      color: #38bdf8;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .email-link-item a:hover {
+      color: #0ea5e9;
+      text-decoration: underline;
+    }
+
+    .email-timestamp {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #8aa6c9;
+      text-align: right;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Scrollbar styling */
+    .popup-content::-webkit-scrollbar,
+    .email-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .popup-content::-webkit-scrollbar-track,
+    .email-body::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .popup-content::-webkit-scrollbar-thumb,
+    .email-body::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.4);
+      border-radius: 3px;
+    }
+
+    .popup-content::-webkit-scrollbar-thumb:hover,
+    .email-body::-webkit-scrollbar-thumb:hover {
+      background: rgba(148, 163, 184, 0.6);
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .status-indicator.active {
+      background: #22c55e;
+      box-shadow: 0 0 8px rgba(34, 197, 94, 0.5);
+    }
+
+    .status-indicator.inactive {
+      background: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <div class="header-left">
+        <div class="header-icon">📚</div>
+        <div>
+          <div class="header-title">Universal Reader</div>
+          <div class="platform-badge" id="platformBadge">ALL</div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="icon-btn" id="openTabBtn" title="Open source tab">↗</button>
+        <button class="icon-btn" id="refreshBtn" title="Refresh content">🔄</button>
+      </div>
+    </div>
+
+    <div class="popup-content" id="popupContent">
+      <div class="empty-state">
+        <div class="empty-icon">📬</div>
+        <div class="empty-text">No content loaded</div>
+        <div class="empty-hint">Open Gmail, WhatsApp Web, or Telegram Web and select a message/chat</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "C:/Users/aksha/OneDrive/Documents/COLLEGE/YEAR/SECOND YR/FIRST SEM/OOPS/PROGRAMS/FILES"
+		},
+		{
+			"path": "../../../YEAR/SECOND YR/SECOND SEM/WAD"
+		},
+		{
+			"path": "../../../YEAR/SECOND YR/BLOG APP"
+		},
+		{
+			"path": "../../../YEAR/SECOND YR/ML Training"
+		}
+	],
+	"settings": {
+		"java.project.sourcePaths": [
+			"src"
+		],
+		"java.project.outputPath": "bin",
+		"java.project.referencedLibraries": [
+			"lib/**/*.jar"
+		],
+		"liveServer.settings.multiRootWorkspaceName": "WAD"
+	}
+}

@@ -1,0 +1,24 @@
+{
+  "name": "Email Reader",
+  "version": "0.01",
+  "description": "Read and display Gmail emails in a popup",
+  "background":{
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting", "storage", "tabs"],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["contentScript.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Email Reader"
+  },
+  "manifest_version": 3
+}
